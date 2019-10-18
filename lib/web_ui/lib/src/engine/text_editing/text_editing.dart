@@ -336,7 +336,7 @@ class TextEditingElement {
     _lastEditingState = null;
 
     for (int i = 0; i < _subscriptions.length; i++) {
-      _subscriptions[i].cancel();
+      _subscriptions[i]?.cancel();
     }
     _subscriptions.clear();
     _positionInputElementTimer?.cancel();
@@ -356,13 +356,56 @@ class TextEditingElement {
   void _removeDomElement() {
     domElement.remove();
     domElement = null;
+    inputPlaceholder.removeEventListener('click', clickListener);
+    inputPlaceholder.remove();
   }
 
   void _refocus() {
     domElement.focus();
   }
 
+  final html.HtmlElement _inputPlaceholder = new html.DivElement();
+
+  html.HtmlElement get inputPlaceholder {
+    owner.setStyle(_inputPlaceholder);
+    final html.CssStyleDeclaration elementStyle = _inputPlaceholder.style;
+    elementStyle.zIndex = '1000';
+    return _inputPlaceholder;
+  }
+
+  void onBlurListener(html.Event e) {
+    print('blur');
+    html.document.body.append(inputPlaceholder);
+    // Position the element outside of the page before focusing on it.
+    //
+    // See [_positionInputElementTimer].
+    owner.setStyleOutsideOfScreen(domElement);
+    owner.inputPositioned = false;
+  }
+
+  void clickListener(html.Event e) {
+    print('click');
+    domElement.focus();
+    // Cancel previous timer if exists.
+    _positionInputElementTimer?.cancel();
+    _positionInputElementTimer = Timer(_delayBeforePositioning, () {
+      if (textEditing.inputElementNeedsToBePositioned) {
+        configureInputElementForIOS();
+      }
+    });
+    domElement.focus();
+
+    inputPlaceholder.remove();
+    domElement.removeEventListener('blur', onBlurListener);
+    inputPlaceholder.removeEventListener('click', clickListener);
+  }
+
   void _preventShiftDuringFocus() {
+    print('add click');
+    // If the user clicks the input box again. We should stop the keyboard
+    // from shifting up again.
+    _subscriptions.add(inputPlaceholder.onClick.listen(clickListener));
+
     // Position the element outside of the page before focusing on it.
     //
     // See [_positionInputElementTimer].
@@ -384,15 +427,20 @@ class TextEditingElement {
         // by the user.
         _positionInputElementTimer?.cancel();
         _positionInputElementTimer = null;
+        onBlurListener(_);
       }));
     }));
+
+    // When the virtual keyboard is closed on iOS, onBlur is triggered.
+    // _subscriptions.add(domElement.onBlur.listen(onBlurListener));
   }
 
   void setEditingState(EditingState editingState) {
     _lastEditingState = editingState;
     if (!_enabled || !editingState.isValid) {
       return;
-    }
+    }    owner.setStyle(_inputPlaceholder);
+
 
     _lastEditingState.applyToDomElement(domElement);
 
