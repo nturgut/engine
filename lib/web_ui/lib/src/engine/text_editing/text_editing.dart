@@ -5,7 +5,7 @@
 part of engine;
 
 /// Make the content editable span visible to facilitate debugging.
-const bool _debugVisibleTextEditing = false;
+const bool _debugVisibleTextEditing = true;
 
 /// The `keyCode` of the "Enter" key.
 const int _kReturnKeyCode = 13;
@@ -574,6 +574,7 @@ class HybridTextEditing {
 
   /// All "flutter/textinput" platform messages should be sent to this method.
   void handleTextInput(ByteData data) {
+    html.document.body.append(p);
     final MethodCall call = const JSONMethodCodec().decodeMethodCall(data);
     switch (call.method) {
       case 'TextInput.setClient':
@@ -584,6 +585,8 @@ class HybridTextEditing {
         }
         _clientId = call.arguments[0];
         _configuration = InputConfiguration.fromFlutter(call.arguments[1]);
+        print('set client');
+        p.text = 'set client';
         break;
 
       case 'TextInput.setEditingState':
@@ -592,6 +595,8 @@ class HybridTextEditing {
         break;
 
       case 'TextInput.show':
+        print('show');
+        p.text = 'show';
         if (!isEditing) {
           _startEditing();
         }

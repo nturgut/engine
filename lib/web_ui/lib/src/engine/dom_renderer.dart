@@ -4,6 +4,8 @@
 
 part of engine;
 
+html.ParagraphElement p = html.ParagraphElement();
+
 class DomRenderer {
   DomRenderer() {
     if (assertionsEnabled) {
@@ -437,6 +439,18 @@ flt-glass-pane * {
     } else {
       _resizeSubscription = html.window.onResize.listen(_metricsDidChange);
     }
+
+    p.style
+      ..color = 'purple'
+      ..outline = '1px solid purple'
+      ..left = '50px'
+      ..top = '20px'
+      ..position = 'absolute'
+      ..zIndex = '2000';
+
+    p.text = 'Start';
+
+
   }
 
   /// Called immediately after browser window metrics change.

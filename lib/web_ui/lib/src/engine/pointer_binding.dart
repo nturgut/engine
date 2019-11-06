@@ -349,6 +349,7 @@ class TouchAdapter extends BaseAdapter {
   @override
   void _setup() {
     _addEventListener('touchstart', (html.Event event) {
+      p.text = 'touchstart';
       _updateButtonDownState(
           _deviceFromHtmlEvent(event), _kPrimaryMouseButton, true);
       _callback(_convertEventToPointerData(ui.PointerChange.down, event));
@@ -365,6 +366,7 @@ class TouchAdapter extends BaseAdapter {
     _addEventListener('touchend', (html.Event event) {
       // On Safari Mobile, the keyboard does not show unless this line is
       // added.
+      p.text = 'touchend';
       event.preventDefault();
       _updateButtonDownState(
           _deviceFromHtmlEvent(event), _kPrimaryMouseButton, false);
