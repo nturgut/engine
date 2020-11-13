@@ -20,7 +20,7 @@ void main() {
     expect(imageElements[0].naturalWidth, 1.5 * 100);
     expect(imageElements[0].naturalHeight, 1.5 * 100);
     expect(imageElements[0].width, 100);
-    expect(imageElements[0].height, 100);
+    expect(imageElements[0].height, 99);
     expect(imageElements[1].width, isNot(0));
   });
 }

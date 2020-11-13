@@ -23,6 +23,6 @@ void main() {
         expect(iOSFinder, findsNothing);
 
         final Finder androidFinder = find.byKey(const Key('androidKey'));
-        expect(androidFinder, findsNothing);
+        expect(androidFinder, findsOneWidget);
       });
 }

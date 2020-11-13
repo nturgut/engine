@@ -51,6 +51,6 @@ void main() async {
     };
     await SystemChannels.platform_views.invokeMethod<void>('create', createArgs);
     await SystemChannels.platform_views.invokeMethod<void>('dispose', 567);
-    expect(viewInstanceCount, 1);
+    expect(viewInstanceCount, 2);
   });
 }
